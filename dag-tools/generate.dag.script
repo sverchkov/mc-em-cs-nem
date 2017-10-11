@@ -1,0 +1,31 @@
+#!/bin/bash
+
+gen_k_lim=5
+learn_k_lim=10
+n_list="3 5 10 25"
+reps=50
+
+mkdir -p rdata
+
+for k in `seq 1 ${gen_k_lim}`; do
+	for n in ${n_list}; do
+		for r in `seq 1 ${reps}`; do
+			id="$n-$k-$r"
+			dfile="data-$id.RData"
+			echo JOB GENERATE-$id generate.condor
+			echo VARS GENERATE-$id k=\"$k\" n=\"$n\" out=\"${dfile}\"
+			for l in `seq 1 ${learn_k_lim}`; do
+				id2="$id-$l"
+				mfile="model-$id2.RData"
+				echo JOB LEARN-$id2 learn.condor
+				echo VARS LEARN-$id2 in=\"${dfile}\" k=\"$l\" out=\"${mfile}\"
+				echo PARENT GENERATE-$id CHILD LEARN-$id2
+
+				echo JOB EVAL-${id2} evaluate.condor
+				echo VARS EVAL-${id2} in=\"${mfile}\" out=\"eval-${id2}.RData\" csv=\"eval-${id2}.csv\"
+				echo PARENT LEARN-${id2} CHILD EVAL-${id2}
+			done;
+		done;
+	done;
+done;
+
