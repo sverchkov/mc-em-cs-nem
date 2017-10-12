@@ -7,6 +7,6 @@ shift
 args=$@
 
 tar -xzf R.tar.gz
-export PATH=$(pwd)/lib64/R/bin:$PATH
+export PATH=$(pwd)/R/bin:$PATH
 R CMD BATCH "--args '$args' $r_script"
 
