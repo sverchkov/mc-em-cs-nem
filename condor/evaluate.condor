@@ -6,7 +6,7 @@ universe = vanilla
 
 requirements = (OpSys == "LINUX") && (OpSysMajorVer == 7)
 
-executable = /home/sverchkov/scripts/condor_run_r.sh
+executable = condor_run_r.sh
 
 #log = logs/log.$(Cluster).$(Process).txt
 # no input
@@ -15,7 +15,7 @@ executable = /home/sverchkov/scripts/condor_run_r.sh
 
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
-transfer_input_files = R.tar.gz,evaluate.csnem.R,rdata/$(in)
+transfer_input_files = ../R.tar.gz,../R/evaluate.csnem.R,rdata/$(in)
 transfer_output_files = eval.RData,eval.csv
 transfer_output_remaps = "eval.RData=rdata/$(out);eval.csv=csv/$(csv)"
 
