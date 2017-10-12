@@ -48,6 +48,8 @@ control = set.default.parameters(
   lambda = 0.5 # (ep in runMCMC) Sparsity prior for acceptance rate (check paper)
 )
 
+control$lowMemFootprint <- TRUE
+
 # Run NEM
 
 big.nem <- nem( D = R, inference = inference, control = control )
