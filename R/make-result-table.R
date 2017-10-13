@@ -6,6 +6,8 @@ getEvalSummary = function( file ){
   print( file )
   env = new.env()
   load( file = file, envir = env )
+  lik = env$big.nem$mLL
+  lik = lik[[ length(lik) ]]
   return ( as_tibble( list(
     "Actions" = env$n.actions,
     "Effects" = env$n.effects,
@@ -14,7 +16,8 @@ getEvalSummary = function( file ){
     "Effect-wise precision" = env$effect.precision,
     "Effect-wise recall" = env$effect.recall,
     "Parent pattern precision" = env$patterns.precision,
-    "Parent pattern recall" = env$patterns.recall
+    "Parent pattern recall" = env$patterns.recall,
+    "Likelihood" = lik
     ) ) )
 }
 
