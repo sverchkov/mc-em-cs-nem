@@ -9,6 +9,7 @@
 
 library(shiny)
 library(ggplot2)
+library(dplyr)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -20,6 +21,8 @@ ui <- fluidPage(
    plotOutput("plotER"),
    plotOutput("plotAP"),
    plotOutput("plotAR"),
+   plotOutput("plotLL"),
+   plotOutput("plotBIC"),
    
    dataTableOutput("resultsTable")
 )
@@ -27,7 +30,15 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
   
-  resultsData <- reactive( read.csv( file = "../csv/table-of-results.csv", check.names = FALSE, stringsAsFactors = FALSE ) )
+  resultsData <- reactive({
+    data <- read.csv( file = "../csv/table-of-results.csv", check.names = FALSE, stringsAsFactors = FALSE ) %>%
+      mutate( `BIC` = 2*`Likelihood`-log(`Effects`)*(`Actions`*(`Actions`-1)*`Learning k`+`Effects`))
+    
+    maxBICs <- data %>% group_by( `Actions`, `Effects`, `True k` ) %>%
+      summarize( `Max BIC` = max( `BIC` ) ) %>% ungroup()
+    
+    left_join( data, maxBICs ) %>% mutate( `Relative BIC` = `BIC` - `Max BIC` )
+  })
 
   output$resultsTable <- renderDataTable( resultsData() )
 
@@ -59,6 +70,19 @@ server <- function(input, output, session) {
       geom_jitter( position = position_jitter( width = 0.15 ) )
   )
   
+  output$plotLL <- renderPlot(
+    ggplot( resultsData(), aes( x = `Learning k`, y = `Likelihood`, group = `Learning k` ) ) +
+      facet_grid( `True k` ~ `Actions`, labeller = label_both ) +
+      geom_boxplot( alpha = 0, color = "red" ) +
+      geom_jitter( position = position_jitter( width = 0.15 ) )
+  )
+  
+  output$plotBIC <- renderPlot(
+    ggplot( resultsData(), aes( x = `Learning k`, y = `Relative BIC`, group = `Learning k` ) ) +
+      facet_grid( `True k` ~ `Actions`, labeller = label_both ) +
+      geom_boxplot( alpha = 0, color = "red" ) +
+      geom_jitter( position = position_jitter( width = 0.15 ) )
+  )
 }
 
 # Run the application 
