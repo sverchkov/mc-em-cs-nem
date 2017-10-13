@@ -21,8 +21,8 @@ transfer_output_remaps = "eval.RData=rdata/$(out);eval.csv=csv/$(csv)"
 
 arguments = evaluate.csnem.R $(in) eval.RData eval.csv
 
-request_memory = 2500M
-request_disk = 500M
+request_memory = 16000M
+request_disk = 8000M
 
 # JobStatus 5 means the job is held (redundant?)
 # HoldReasonCode 13 means condor_starter/_shadow failed to read or send job files (should detect failure to generate output)

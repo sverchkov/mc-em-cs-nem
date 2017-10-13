@@ -4,9 +4,17 @@
 #
 r_script=$1
 shift 
-args=$@
+echo "R/bin/R CMD BATCH '--args $@' $r_script" >> run.me
 
 tar -xzf R.tar.gz
-export PATH=$(pwd)/R/bin:$PATH
-R CMD BATCH "--args '$args' $r_script"
 
+source ./run.me
+
+last_arg=$1
+while (( $# )); do
+	last_arg=$1
+done
+
+if [ ! -f $last_arg ]; then
+	which sed >> ${r_script}out
+fi
