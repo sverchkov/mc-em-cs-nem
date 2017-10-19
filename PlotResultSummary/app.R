@@ -31,7 +31,7 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   
   resultsData <- reactive({
-    data <- read.csv( file = "../csv/table-of-results.csv", check.names = FALSE, stringsAsFactors = FALSE ) %>%
+    data <- read.csv( file = "../csv/table-of-results-v2.csv", check.names = FALSE, stringsAsFactors = FALSE ) %>%
       mutate( `BIC` = 2*`Likelihood`-log(`Effects`)*(`Actions`*(`Actions`-1)*`Learning k`+`Effects`))
     
     maxBICs <- data %>% group_by( `Actions`, `Effects`, `True k` ) %>%
