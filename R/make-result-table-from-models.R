@@ -10,7 +10,7 @@ getEvalSummary <- function( file ){
   mll = env$big.nem$mLL
   mll = mll[[ length(mll) ]]
   
-  ll = nem.effect.matrix( env$big.nem ) %*% D
+  ll = sum( nem.effect.matrix( env$big.nem ) * t( makeBigRMatrix( env$D, env$learning.k ) ) )
   
   effect.matrix <- getEffectsFromBigNEM( env$big.nem, env$n.actions, env$learning.k )
   patterns <- getPatternsFromNEM( env$big.nem, env$n.actions, env$learning.k )
