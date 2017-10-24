@@ -3,12 +3,14 @@
 library("dplyr")
 source("R/helper-functions.R")
 
-getEvalSummary = function( file ){
+getEvalSummary <- function( file ){
   print( file )
   env = new.env()
   load( file = file, envir = env )
-  lik = env$big.nem$mLL
-  lik = lik[[ length(lik) ]]
+  mll = env$big.nem$mLL
+  mll = mll[[ length(mll) ]]
+  
+  ll = nem.effect.matrix( env$big.nem ) %*% D
   
   effect.matrix <- getEffectsFromBigNEM( env$big.nem, env$n.actions, env$learning.k )
   patterns <- getPatternsFromNEM( env$big.nem, env$n.actions, env$learning.k )
@@ -26,12 +28,13 @@ getEvalSummary = function( file ){
     "Effect-wise recall" = effect.stats$recall,
     "Parent pattern precision" = pattern.stats$precision,
     "Parent pattern recall" = pattern.stats$recall,
-    "Likelihood" = lik,
+    "Log posterior" = mll,
+    "Log likelihood" = ll,
     "File" = file
     ) ) )
 }
 
-out.file = "csv/table-of-results-v2.csv"
+out.file = "csv/table-of-results-v3.csv"
 
 input.files <- paste0("rdata/", dir( "rdata", pattern = "model-.*\\.RData" ) )
 
