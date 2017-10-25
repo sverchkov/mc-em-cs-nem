@@ -16,6 +16,7 @@ for r in `seq 1 ${reps}`; do
 				id2="$id-$l"
 				mfile="model-$id2.RData"
 				if ! [[ -s rdata/$mfile ]]; then
+					echo running $id2
 					rscript R/run.learner.R rdata/$dfile $l rdata/$mfile
 				fi
 			done;
