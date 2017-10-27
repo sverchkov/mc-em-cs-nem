@@ -34,9 +34,9 @@ getEvalSummary <- function( file ){
     ) ) )
 }
 
-out.file = "csv/table-of-results-v3.csv"
+out.file = "csv/table-of-results-v4.csv"
 
-input.files <- paste0("rdata/", dir( "rdata", pattern = "model-.*\\.RData" ) )
+input.files <- paste0("rdata/", dir( "rdata", pattern = "model-[0-9]+-[1-5]-([1-9]|10)-[1-8]\\.RData" ) )
 
 input.files <- input.files[ file.info( input.files )$size > 0 ]
 
