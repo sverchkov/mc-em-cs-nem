@@ -19,24 +19,34 @@ getEvalSummary <- function( file ){
   effect.stats <- getPRStatsBinary( effect.matrix, env$efmx )
   pattern.stats <- getPRStatsSets( patterns, true.patterns )
   
+  # Smarter ancestry measurement
+  predicted.matrices <- getMatrixListFromBigNEM( env$big.nem, env$n.actions, env$learning.k )
+  predicetd.ancestry.list <- getAncestryListFromMatrixList( predicted.matrices )
+  true.ancestry.list <- getAncestryListFromMatrixList( env$mtxs )
+  
+  ancestry.precision <- getPrecisionFromAncestryLists( predicetd.ancestry.list, true.ancestry.list )
+  ancestry.recall <- getPrecisionFromAncestryLists( true.ancestry.list, predicetd.ancestry.list )
+
   return ( as_tibble( list(
     "Actions" = env$n.actions,
     "Effects" = env$n.effects,
     "True k" = env$true.k,
     "Learning k" = env$learning.k,
-    "Effect-wise precision" = effect.stats$precision,
-    "Effect-wise recall" = effect.stats$recall,
-    "Parent pattern precision" = pattern.stats$precision,
-    "Parent pattern recall" = pattern.stats$recall,
+    "Effect matrix precision" = effect.stats$precision,
+    "Effect matrix recall" = effect.stats$recall,
+    "Ancestry set precision" = pattern.stats$precision,
+    "Ancestry set recall" = pattern.stats$recall,
+    "Pairwise ancestry precision" = ancestry.precision,
+    "Pairwise ancestry recall" = ancestry.recall,
     "Log posterior" = mll,
     "Log likelihood" = ll,
     "File" = file
     ) ) )
 }
 
-out.file = "csv/table-of-results-v4.csv"
+out.file = "csv/table-of-results-v5.csv"
 
-input.files <- paste0("rdata/", dir( "rdata", pattern = "model-[0-9]+-[1-5]-([1-9]|10)-[1-8]\\.RData" ) )
+input.files <- paste0("rdata/", dir( "rdata", pattern = "model-[0-9]+-[0-9]+-(14|15|32|39|50)-[1-8]\\.RData" ) )
 
 input.files <- input.files[ file.info( input.files )$size > 0 ]
 

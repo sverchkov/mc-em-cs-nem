@@ -66,3 +66,63 @@ getPatternsFromMatrixList <- function( matrices ){
   true.patterns <- Reduce( cbind, matrices )
   true.patterns <- unique( Map( function( i ) as.numeric( true.patterns[,i] ), 1:ncol( true.patterns ) ) )
 }
+
+#' Get precision/recall statistics on pairwise ancestry relations
+#'
+#' @param true.mtx.list List of ancestry matrices making up the generating model
+#' @param inferred.big.nem Inferred "big" nem (with replicated action columns)
+getPRStatsPairwiseAncestry <- function( true.mtx.list, inferred.big.nem, n.actions, learning.k ) {
+  true.ancestries <- Reduce( `|`, true.mtx.list )
+  big.matrix <- transitive.closure( inferred.big.nem$graph, mat = TRUE )
+  inferred.ancestries <- Reduce( `|`, Map( function( i ){
+    big.matrix[ (i-1)*n.actions + (1:n.actions), (i-1)*n.actions + (1:n.actions) ]
+  }, 1:learning.k ) )
+  
+  tp = true.ancestries & inferred.ancestries
+  fp = inferred.ancestries & !true.ancestries
+  fn = !inferred.ancestries $ true.ancestries
+  
+  return ( list( precision = tp/(tp+fp), recall = tp/(tp+fn) ) )
+}
+
+#' Get ancestry list from matrix list
+#' 
+#' 
+getAncestryListFromMatrixList <- function( matrices ){
+  unique( Reduce( c, Map( function ( mtx ){
+    Map( function( i ) list( i, as.numeric( mtx[,i] ) ), 1:ncol( mtx ) )
+  }, matrices ) ) )
+}
+
+#' Get precision of one ancestry list predicting another
+#' 
+#' see getAncestryListFromMatrixList to see what ancestry lists are.
+#' 
+#' To get recall, just call this but switch truth and guess.
+#' 
+#' @param guess an ancestry list
+#' @param truth an ancestry list
+getPrecisionFromAncestryLists <- function ( guess, truth ){
+  tp <- 0 # True positives
+  pp <- 0 # Predicted positives
+  for( guess.tuple in guess ) {
+    node <- guess.tuple[[1]]
+    pp <- pp + sum( guess.tuple[[2]] )
+    
+    # Select best match in truth
+    best.tp <- 0
+    for ( truth.tuple in truth ) if ( truth.tuple[[1]] == node ){
+      tuple.tp = sum( guess.tuple[[2]] & truth.tuple[[2]] )
+      if ( tuple.tp > best.tp ) best.tp <- tuple.tp
+    }
+    tp <- tp + best.tp
+  }
+  return ( tp / pp )
+}
+
+getMatrixListFromBigNEM <- function ( big.nem, n.actions, learning.k ){
+  big.matrix <- transitive.closure( big.nem$graph, mat = TRUE )
+  Map( function( i ){
+    big.matrix[ (i-1)*n.actions + (1:n.actions), (i-1)*n.actions + (1:n.actions) ]
+  }, 1:learning.k )
+}
