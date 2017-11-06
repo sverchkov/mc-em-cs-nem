@@ -20,23 +20,21 @@ results.df <-
   mutate( Rep = extractReplicateNumber( File ) ) %>%
   filter(
     ( ( Actions < 20 ) & ( Rep %in% c( 1:5, 14, 15, 32, 39, 50 ) ) ) |
-    ( ( Actions == 20 ) & ( Rep %in% 1:10 ) ) )
-  #mutate( `Effect matrix F-measure` = 2 / ( (1/`Effect-wise precision`) + (1/`Effect-wise recall`) ) ) %>%
-  #mutate( `Ancestry set F-measure` = 2 / ( (1/`Parent pattern precision`) + (1/`Parent pattern recall`) ) )
+    ( ( Actions == 20 ) & ( Rep %in% 1:10 ) ) ) %>%
+  mutate( `Effect matrix F-measure` = 2 / ( (1/`Effect matrix precision`) + (1/`Effect matrix recall`) ) ) %>%
+  mutate( `Pairwise ancestry F-measure` = 2 / ( (1/`Pairwise ancestry precision`) + (1/`Pairwise ancestry recall`) ) )
 
 ggplot( results.df, aes( x = `Learning k`, y = `Effect matrix F-measure`, group = `Learning k` ) ) +
+  facet_grid( `True k` ~ `Actions`, labeller = label_both, scales="free_y" ) +
+  geom_boxplot( alpha = 0 )
+
+ggsave("plots/effect-f-measures.pdf", width = 12, height = 6, units = "in" )
+
+ggplot( results.df, aes( x = `Learning k`, y = `Pairwise ancestry F-measure`, group = `Learning k` ) ) +
   facet_grid( `True k` ~ `Actions`, labeller = label_both ) +
-  geom_boxplot( alpha = 0, color = "red" ) +
-  geom_jitter( position = position_jitter( width = 0.15 ) )
+  geom_boxplot( alpha = 0 )
 
-ggsave("plots/effect-f-measures.pdf")
-
-ggplot( results.df, aes( x = `Learning k`, y = `Ancestry set F-measure`, group = `Learning k` ) ) +
-  facet_grid( `True k` ~ `Actions`, labeller = label_both ) +
-  geom_boxplot( alpha = 0, color = "red" ) +
-  geom_jitter( position = position_jitter( width = 0.15 ) )
-
-ggsave("plots/ancestrys-f-measures.pdf")
+ggsave("plots/ancestrys-f-measures.pdf", width = 12, height = 6, units = "in" )
 
 results.with.aicc <- results.df %>%
   mutate(
