@@ -14,15 +14,19 @@ for beta in ${noise}; do
   		for n in ${n_list}; do
   			id="n_${n}_k_${k}_b_${beta}_r_${r}"
   			dfile="data_${id}.RData"
-  			echo generating ${dfile}
   			
-  			density=0.2
-  			if [ 20 == ${n} ]; then
-  			  density=0.04
-  			fi
-  			echo using density ${density}
+  			if ! [[ -s rdata/${dfile} ]]; then
+    			echo generating ${dfile}
   			
-  			rscript R/generate.data.R $k $n 1000 ${density} ${beta} rdata/${dfile}
+    			density=0.2
+    			if [ 20 == ${n} ]; then
+    			  density=0.04
+    			fi
+    			echo using density ${density}
+  			
+    			rscript R/generate.data.R $k $n 1000 ${density} ${beta} rdata/${dfile}
+    		fi
+    		
   			for l in `seq 1 ${learn_k_lim}`; do
   				id2="${id}_l_$l"
   				mfile="model_${id2}.RData"
