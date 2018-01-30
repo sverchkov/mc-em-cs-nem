@@ -1,5 +1,6 @@
 # MC EM CS NEM
-Simulation code and results for the MC-EM-CS-NEM project. Not really for public consumption.
+Simulation code for running on HTCondor the simulations for the paper "Context-Specific Nested Effects Models" by Sverchkov et al.
+The final data in the paper was produced by local execution using the code in the master branch.
 
 ## Files and where to find them
 * `PlotResultSummary` is a *shiny* app for plotting the results
