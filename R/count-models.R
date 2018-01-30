@@ -34,3 +34,4 @@ model.counts <-
 ggplot( model.counts, aes( x = learning.k, y = count, group = learning.k, color = beta.parameter, shape = as.factor(edge.density) ) ) +
   facet_grid( true.k ~ n.actions, labeller = label_both ) +
   geom_point()
+
