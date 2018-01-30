@@ -43,20 +43,18 @@ for r in ${reps}; do
       fi
     		
       for l in `seq 1 ${learn_k_lim}`; do
-        (
-          idM="${idD}-l${l}"
-          mfile="${models_dir}/model-${idM}.RData"
-          lockfile="${locks_dir}/lock-${idM}"
-          if ! [[ -s ${mfile} ]]; then
-            if ! [[ -s ${lockfile} ]]; then
-              date > "${lockfile}"
-              echo learning ${mfile}
-              rscript R/run.learner.R ${dfile} ${l} ${mfile}
-            fi
+        idM="${idD}-l${l}"
+        mfile="${models_dir}/model-${idM}.RData"
+        lockfile="${locks_dir}/lock-${idM}"
+        if ! [[ -s ${mfile} ]]; then
+          if ! [[ -s ${lockfile} ]]; then
+            date > "${lockfile}"
+            echo learning ${mfile}
+            rscript R/run.learner.R ${dfile} ${l} ${mfile}
+            rm "${lockfile}"
           fi
-        ) &
+        fi
       done;
-      wait
     done;
   done;
 done;

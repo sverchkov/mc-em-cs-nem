@@ -2,7 +2,7 @@
 
 gen_k_seq="1 3 5"
 learn_k_lim=8 #10
-n_list="5 20" #"3 5 10 25"
+n_list=20 #"5 20" #"3 5 10 25"
 reps=`seq 1 20`
 noise="5 2 1"
 
@@ -17,25 +17,25 @@ mkdir -p ${models_dir}
 mkdir -p ${locks_dir}
 
 
-for n in ${n_list}; do
+for beta in ${noise}; do
   (
-    for r in ${reps}; do
-      for k in ${gen_k_seq}; do
-        density=0.2
-        if [ 20 == ${n} ]; then
-          density=0.04
-        fi
-        echo using density ${density}
+    for n in ${n_list}; do
+      for r in ${reps}; do
+        for k in ${gen_k_seq}; do
+          density=0.2
+          if [ 20 == ${n} ]; then
+            density=0.04
+          fi
+          echo using density ${density}
 
-        idT="r${r}-n${n}-e1000-d${density}-k${k}"
-        tfile="${truths_dir}/truth-${idT}.RData"
+          idT="r${r}-n${n}-e1000-d${density}-k${k}"
+          tfile="${truths_dir}/truth-${idT}.RData"
       
-        if ! [[ -s ${tfile} ]]; then
-          echo generating ${tfile}
-          rscript R/generate-ground-truth.R ${k} ${n} 1000 ${density} ${tfile}
-        fi
+          if ! [[ -s ${tfile} ]]; then
+            echo generating ${tfile}
+            rscript R/generate-ground-truth.R ${k} ${n} 1000 ${density} ${tfile}
+          fi
 
-        for beta in ${noise}; do
           idD="${idT}-b${beta}"
           dfile="${data_dir}/data-${idD}.RData"
 
@@ -53,12 +53,14 @@ for n in ${n_list}; do
                 date > "${lockfile}"
                 echo learning ${mfile}
                 rscript R/run.learner.R ${dfile} ${l} ${mfile}
+                rm "${lockfile}"
               fi
             fi
           done; #l
-        done; #beta
-      done; #k
-    done; #r
+        done; #k
+      done; #r
+    done; #n
   ) &
-  wait
-done; #n
+done; #beta
+wait
+
