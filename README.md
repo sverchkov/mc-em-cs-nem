@@ -10,6 +10,7 @@ This repository serves as
 * `rdata` would be created by simulation code, and hold `RData` files, including the ground truth generating models+data, learned models, evaluation statistics.
 * `plots` would be created by plotting R scripts
 * `local-exec` contain bash scripts for running the simulations
+* `json` the simulated ground truths, in json
 
 ### File naming conventions
 Files created in `rdata` follow the pattern
