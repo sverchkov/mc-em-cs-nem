@@ -127,3 +127,6 @@ ggsave("plots/effect-density-f-measures.pdf", width = 4, height = 3, units = "in
 #  facet_grid( `True k` ~ `Actions`, labeller = label_both ) +
 #  geom_boxplot()
 #  geom_jitter( position = position_jitter( width = 0.15 ) )
+
+ggplot( main.df%>%filter(`True k` == 3, Actions == 20), aes( x = `Learning k`, y = `Effect matrix F-measure`, group = `Learning k` ) ) +geom_boxplot()
+ggsave("plots/effect-for-pres.pdf", width = 6, height = 3, units = "in" )
